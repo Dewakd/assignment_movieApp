@@ -1,126 +1,96 @@
-import React, { useState } from 'react';
-import { Icon } from '@iconify-icon/react';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSearchTerm } from '../store/searchSlice';
+import MovieCard from '../Components/MovieCard';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { fetchMovies } from '../api';
+import '../index.css';
+import Navbar from '../Components/Navbar';
 
-function App() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+function Homepage() {
+  const dispatch = useDispatch();
+  const searchTerm = useSelector((state) => state.search.searchTerm);
 
-  const closeSidebar = () => setIsSidebarOpen(false);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+    error,
+  } = useInfiniteQuery({
+    queryKey: ['movies', searchTerm],
+    queryFn: ({ pageParam = 1 }) => fetchMovies(searchTerm, pageParam),
+    getNextPageParam: (lastPage, allPages) => {
+      
+      if (!lastPage || lastPage.length === 0) return undefined;
+      return allPages.length + 1;
+    },
+  });
+  
+
+  const movies = data?.pages.flat() || [];
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const term = e.target.querySelector('input').value;
+    dispatch(setSearchTerm(term));
+  };
+
+  if (status === 'loading') return <p className="text-center text-gray-500">Loading...</p>;
+  if (status === 'error') return <p className="text-center text-red-500">Error: {error.message}</p>;
 
   return (
     <div className="h-screen flex relative">
-      <div
-        className={`fixed inset-y-0 left-0 z-20 w-64 bg-white transform ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:relative lg:translate-x-0 transition-transform duration-200 ease-in-out`}
-      >
-        <div className="p-4 text-xl font-semibold border-b border-gray-300">
-          Movie App
-        </div>
-        <ul className="space-y-2 p-4 border-b border-gray-300 overflow-y-auto max-h-[calc(100vh-64px)] scroll-smooth">
-            <p className='text-gray-400'>Categories</p>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">
-                <Icon icon="ph:film-strip-light" width={"30px"} height={"30px"} className="mr-2" />
-                Newest Release
-            </li>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">
-                <Icon icon="cil:star" width={"30px"} height={"30px"} className="mr-2" />
-                Top Rated
-            </li>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">
-                <Icon icon="stash:data-date-light" width={"30px"} height={"30px"} className="mr-2 scale-125" />
-                Up Coming
-            </li>
-
-
-            <p className='text-gray-400 border-t border-gray-300 pt-3'>Genres</p>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">
-                <Icon icon="hugeicons:gun" width={"30px"} height={"30px"} className="mr-2" />
-                Action
-            </li>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">
-                <Icon icon="stash:compass-duotone" width={"30px"} height={"30px"} className="mr-2" />
-                Adventure
-            </li>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">
-                <Icon icon="material-symbols-light:robot-outline" width={"30px"} height={"30px"} className="mr-2 scale-125" />
-                Animation
-            </li>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">
-                <Icon icon="fontisto:laughing" width={"30px"} height={"30px"} className="mr-2" />
-                Comedy
-            </li>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">
-                <Icon icon="mdi:handcuffs" width={"30px"} height={"30px"} className="mr-2" />
-                Crime
-            </li>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">
-                <Icon icon="hugeicons:camera-video" width={"30px"} height={"30px"} className="mr-2" />
-                Documentary
-            </li>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex text-lg">
-                <Icon icon="bi:heartbreak" width={"30px"} height={"30px"} className="mr-2" />
-                Drama
-            </li>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">
-                <Icon icon="emojione-monotone:family" width={"30px"} height={"30px"} className="mr-2" />
-                Family
-            </li>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">
-                <Icon icon="clarity:wand-line" width={"30px"} height={"30px"} className="mr-2" />
-                Fantasy
-            </li>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">
-                <Icon icon="wpf:ghost" width={"30px"} height={"30px"} className="mr-2" />
-                Horror
-            </li>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">
-                <Icon icon="icons8:spy" width={"30px"} height={"30px"} className="mr-2 scale-125" />
-                Mystery
-            </li>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">
-                <Icon icon="solar:ufo-outline" width={"30px"} height={"30px"} className="mr-2 scale-110" />
-                Science Fiction
-            </li>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">
-                <Icon icon="fa:tv" width={"30px"} height={"30px"} className="mr-2" />
-                TV Movie
-            </li>
-            <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">
-                <Icon icon="hugeicons:sword-03" width={"30px"} height={"30px"} className="mr-2" />
-                War
-            </li>
-        </ul>
-
-        
-      </div>
-
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black opacity-50 lg:hidden z-10"
-          onClick={closeSidebar}
-        ></div>
-      )}
-
       <div className="flex-1 bg-gray-100 overflow-auto">
-        <div className="flex items-center justify-between bg-gray-800 text-white p-4 lg:hidden">
-            <h1 className="ml-4 text-lg font-semibold">Movie App</h1>
+        <Navbar />
+
+        <form
+          className="flex items-center justify-center my-4"
+          onSubmit={handleSearch}
+        >
+          <input
+            type="search"
+            className="px-4 py-2 border-2 border-gray-300 rounded-lg w-full md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/5"
+            placeholder="Search for a movie"
+            defaultValue={searchTerm} 
+          />
           <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="text-white focus:outline-none"
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg ml-2"
           >
-            ☰
+            Search
           </button>
+        </form>
+
+        <div className="p-4 px-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 2xl:gap-8 justify-center">
+          {movies.map((movie) => (
+            <MovieCard
+              key={movie.id}
+              id={movie.id}
+              img={movie.poster_path}
+              title={movie.title}
+              rating={movie.vote_average.toFixed(1)}
+              year={movie.release_date}
+            />
+          ))}
         </div>
 
-        <div className="p-6">
-          <h2 className="text-2xl font-bold">Main Content Area</h2>
-          <p className="mt-4">
-            This is the main content area. It will adjust according to the screen size and the sidebar.
-          </p>
-        </div>
+        {/* Load More Button */}
+        {hasNextPage && (
+          <div className="text-center my-4">
+            <button
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+            >
+              {isFetchingNextPage ? 'Loading...' : 'Load More'}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-export default App;
+export default Homepage;

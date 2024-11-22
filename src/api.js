@@ -1,10 +1,18 @@
-// src/api.js
+const API_KEY = import.meta.env.VITE_API_KEY;
+const BASE_URL = import.meta.env.VITE_API_URL;
 
-const API_KEY = '0bb7234121894136991a913477f8886e';
-const BASE_URL = 'https://api.themoviedb.org/3';
+export const fetchMovies = async (searchTerm = '', page = 1) => {
+  const url = searchTerm
+    ? `${BASE_URL}/search/movie?query=${encodeURIComponent(searchTerm)}&page=${page}&api_key=${API_KEY}`
+    : `${BASE_URL}/movie/popular?page=${page}&api_key=${API_KEY}`;
 
-export const fetchMovies = async (page = 1) => {
-  const response = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&page=${page}`);
+  const response = await fetch(url);
   const data = await response.json();
-  return data.results;
+  return data.results || []; 
+};
+
+export const fetchMovieDetails = async (id) => {
+  const response = await fetch(`${BASE_URL}/movie/${id}?api_key=${API_KEY}`);
+  const data = await response.json();
+  return data;
 };
