@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { Icon } from '@iconify-icon/react';
 import { SidebarContext } from '../Context/SidebarContext';
+import { Link } from 'react-router-dom';
 
 export default function Sidebar() {
 const { isSidebarOpen, toggleSidebar } = useContext(SidebarContext);
@@ -10,9 +11,9 @@ const { isSidebarOpen, toggleSidebar } = useContext(SidebarContext);
       isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
     } lg:relative lg:translate-x-0 transition-transform duration-200 ease-in-out`}
   >
-        <div className="p-4 text-xl font-semibold border-b border-gray-300">
+        <Link to="/" className="py-3 flex items-center justify-center text-xl font-semibold border-b border-gray-300">
         Movie App
-        </div>
+        </Link>
         <ul className="space-y-2 p-4 border-b border-gray-300 overflow-y-auto max-h-[calc(100vh-64px)] scroll-smooth">
             <p className='text-gray-400'>Categories</p>
             <li className="hover:bg-gray-300 rounded p-2 cursor-pointer flex items-center text-lg">

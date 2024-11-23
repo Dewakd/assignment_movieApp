@@ -27,7 +27,6 @@ function MovieDetail() {
         
           <div className="flex-1 bg-gray-100 overflow-auto">
           <Navbar />
-          <h2 className="text-2xl font-bold">Main Content Area</h2>
 
           <div className="bg-cover bg-center h-full text-white" style={{ backgroundColor: 'rgba(0, 0, 0, 0.75)', backgroundImage: `url(https://image.tmdb.org/t/p/original/${movie.backdrop_path})`, backgroundBlendMode: 'multiply'  }}>
 

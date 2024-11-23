@@ -6,10 +6,13 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchMovies } from '../api';
 import '../index.css';
 import Navbar from '../Components/Navbar';
+import Sidebar from '../Components/Sidebar';
 
 function Homepage() {
   const dispatch = useDispatch();
   const searchTerm = useSelector((state) => state.search.searchTerm);
+
+  const [isLoading, setIsLoading] = React.useState(true);
 
   const {
     data,
@@ -42,6 +45,7 @@ function Homepage() {
 
   return (
     <div className="h-screen flex relative">
+      <Sidebar />
       <div className="flex-1 bg-gray-100 overflow-auto">
         <Navbar />
 
